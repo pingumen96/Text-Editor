@@ -1,4 +1,5 @@
 import tkinter
+import platform
 from tkinter import ttk
 from tkinter import filedialog
 import os
@@ -52,7 +53,11 @@ def right_click_menu(event):
 def right_click_menu_destroy(widget):
 	# semplicemente toglie il menù apparentemente senza perdite di memoria
 	right_click_text_menu.unpost()
-	pass
+	
+
+def enter_handler(event):
+    #inserire controllo: se si è avanti di una o più tabulazioni, ripetere lo stesso numero di tabulazioni
+    pass
 
 # funzione per far comparire e scomparire il terminale
 
@@ -64,7 +69,13 @@ def embedded_terminal():
         term_frame = tkinter.Frame(height=200, width=700)
         term_frame.grid(sticky=tkinter.N+tkinter.E+tkinter.S+tkinter.W)
         wid = term_frame.winfo_id()
-        os.system('xterm -into %d -geometry 1360x150 &' % wid) #os.system('xterm -into %d -geometry 1360x150 -sb &' % wid)
+        #va dato comando diverso a seconda della distribuzione utilizzata
+        if platform.linux_distribution()[0]=='Ubuntu':
+            os.system('xterm -into %d -geometry 1360x150 &' % wid) #os.system('xterm -into %d -geometry 1360x150 -sb &' % wid)
+        elif platform.linux_distribution()[0]=='Fedora':
+            print("Non è stato possibile embeddare il terminale nella finestra. Tuttavia questo verrà aperto comunque.")
+            os.system('gnome-terminal --window-with-profile %d --geometry 1360x150 &' % wid)
+            term_frame.grid_remove() #viene rimosso il frame che deve contenere terminale
         placed_terminal=True
     elif placed_terminal:
         term_frame.grid_remove()
@@ -118,6 +129,9 @@ def main_gui():  # creazione interfaccia grafica
     # fa corrispondere evento del premere tasto destro a funzione
     text.bind('<Button-3>',right_click_menu)
     text.bind('<Button-1>',lambda event:right_click_menu_destroy(right_click_text_menu))
+    #INIZIO PROVA RILEVAMENTO TABULAZIONE PER INSERIRLA IN AUTOMATICO
+    text.bind('<KeyPress-Return>',enter_handler)
+    #FINE PROVA
 
     # terminale embeddato, prove
     # embedded_terminal()
