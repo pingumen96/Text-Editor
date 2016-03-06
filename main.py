@@ -57,7 +57,16 @@ def right_click_menu_destroy(widget):
 
 def enter_handler(event):
     #inserire controllo: se si è avanti di una o più tabulazioni, ripetere lo stesso numero di tabulazioni
-    pass
+    global text
+    string=text.get('insert linestart','insert lineend')
+    if '\t' in string:
+        text.insert('insert','\n')
+        for x in range(0,string.count('\t',0,len(string))):
+            text.insert('insert','\t')
+    else:
+        text.insert('insert','\n')
+    return 'break'
+    #tornare di una riga indietro
 
 # funzione per far comparire e scomparire il terminale
 
@@ -85,6 +94,7 @@ def embedded_terminal():
 # considerare refactoring perché la funzione sta diventando grande
 def main_gui():  # creazione interfaccia grafica
     # dichiarazione casella di testo
+    global text
     text = tkinter.Text(root)
 
     menu_bar = tkinter.Menu(root)
@@ -129,9 +139,7 @@ def main_gui():  # creazione interfaccia grafica
     # fa corrispondere evento del premere tasto destro a funzione
     text.bind('<Button-3>',right_click_menu)
     text.bind('<Button-1>',lambda event:right_click_menu_destroy(right_click_text_menu))
-    #INIZIO PROVA RILEVAMENTO TABULAZIONE PER INSERIRLA IN AUTOMATICO
     text.bind('<KeyPress-Return>',enter_handler)
-    #FINE PROVA
 
     # terminale embeddato, prove
     # embedded_terminal()
